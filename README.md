@@ -26,6 +26,7 @@ In the experiments folder of this repo you will see a script called "chaos-gator
 1. If it can attach the policy, it then checks to see if the policy was automatically removed
 
 Here is a sample run:
+
 <img src="https://i.postimg.cc/FHxkTgTZ/auto-remediation.jpg" width="800">
 
 Taking this example further you can add reporting to your SOC team, for example automatically posting to a Slack channel that adding the AdministratorAccess policy was attempted.   You could also turn off autoremediation and see how long it takes the SOC team to detect (MTTD) and remediate it (MTTR).
