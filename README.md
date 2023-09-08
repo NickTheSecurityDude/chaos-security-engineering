@@ -13,10 +13,10 @@ When you launch the CloudFormation stack included in this repo, it will respond 
 1. The AdministratorAccess policy attached to an existing role
 
 To verify this create a role and attach the AdministratorAccess policy.  You will see something like this:
-![](https://i.postimg.cc/h4HDTz1t/admin-policy-attached.jpg)
+<img src="https://i.postimg.cc/h4HDTz1t/admin-policy-attached.jpg" width="800">
 
 Wait a few seconds, then refresh, you will see the policy was automatically removed.  Now, try attaching it to the the role (case #2), again its automatically removed.
-![](https://i.postimg.cc/Bt9J0knK/admin-policy-removed.jpg)
+<img src="https://i.postimg.cc/Bt9J0knK/admin-policy-removed.jpg" width="800">
 
 Organizaitions often have hundreds of controls so manually testing them all on a regular basis would not be practical.  This is where Chaos Security Engineering (CSE) comes in.  You can create different "experiments" to test or simillate breaches and security violations and see how your system responds.
 
@@ -26,6 +26,8 @@ In the experiments folder of this repo you will see a script called "chaos-gator
 1. If it can attach the policy, it then checks to see if the policy was automatically removed
 
 Here is a sample run:
-![](https://i.postimg.cc/FHxkTgTZ/auto-remediation.jpg)
+<img src="https://i.postimg.cc/FHxkTgTZ/auto-remediation.jpg" width="800">
+
+Taking this example further you can add reporting to your SOC team, for example automatically posting to a Slack channel that adding the AdministratorAccess policy was attempted.   You could also turn off autoremediation and see how long it takes the SOC team to detect (MTTD) and remediate it (MTTR).
 
 What other experiements can you think of?
