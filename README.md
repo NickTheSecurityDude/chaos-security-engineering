@@ -12,7 +12,11 @@ When you launch the CloudFormation stack included in this repo, it will respond 
 1. A new role created with the AdministratorAccess policy
 1. The AdministratorAccess policy attached to an existing role
 
-To verify this create a role and attach the AdministratorAccess policy, wait a few seconds, then refresh, you will see the policy was automatically removed.  Now, try attaching it to the the role (case #2), again its automatically removed.
+To verify this create a role and attach the AdministratorAccess policy.  You will see something like this:
+![](https://i.postimg.cc/h4HDTz1t/admin-policy-attached.jpg)
+
+Wait a few seconds, then refresh, you will see the policy was automatically removed.  Now, try attaching it to the the role (case #2), again its automatically removed.
+![](https://i.postimg.cc/Bt9J0knK/admin-policy-removed.jpg)
 
 Organizaitions often have hundreds of controls so manually testing them all on a regular basis would not be practical.  This is where Chaos Security Engineering (CSE) comes in.  You can create different "experiments" to test or simillate breaches and security violations and see how your system responds.
 
@@ -22,3 +26,6 @@ In the experiments folder of this repo you will see a script called "chaos-gator
 1. If it can attach the policy, it then checks to see if the policy was automatically removed
 
 Here is a sample run:
+![](https://i.postimg.cc/FHxkTgTZ/auto-remediation.jpg)
+
+What other experiements can you think of?
