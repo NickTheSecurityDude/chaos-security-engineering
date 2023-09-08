@@ -1,0 +1,82 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: >-
+  Launch in us-east-1 to capture iam api calls
+  Prevents the admin policy from being attached to any role
+
+Resources:
+
+  ChaosLambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Policies:
+        - PolicyName: DetachPolicy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - iam:DetachRolePolicy
+                Resource: '*'
+
+  EnforceNoAdminPolicyLambda:
+    Type: AWS::Lambda::Function
+    Properties: 
+      Role: !GetAtt ChaosLambdaRole.Arn
+      Handler: index.lambda_handler
+      Runtime: python3.11
+      Code:
+        ZipFile: |
+          import json,boto3
+          def lambda_handler(event, context):
+              if event['detail']:
+                  event_name = event['detail']['eventName']
+                  if event_name == 'AttachRolePolicy':
+                    policy_arn=event['detail']['requestParameters']['policyArn']
+                    if policy_arn == 'arn:aws:iam::aws:policy/AdministratorAccess':
+                        print("Admin policy found, attempting to remove...")
+                        role_name = event['detail']['requestParameters']['roleName']
+                        iam_client = boto3.client('iam')
+                        response = iam_client.detach_role_policy(
+                          RoleName = role_name,
+                          PolicyArn = policy_arn
+                        )
+                        print(response)
+
+              return {
+                  'statusCode': 200
+              }
+
+  NoAdminEventRule:
+    Type: AWS::Events::Rule
+    Properties:
+      Targets:
+        - Arn: !GetAtt EnforceNoAdminPolicyLambda.Arn
+          Id: Rule1
+      EventPattern:
+        source:
+          - aws.iam
+        detail-type:
+          - AWS API Call via CloudTrail
+        detail:
+          eventSource:
+            - iam.amazonaws.com
+
+
+  PermissionForEventsToInvokeLambda:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt EnforceNoAdminPolicyLambda.Arn
+      Action: lambda:InvokeFunction
+      Principal: events.amazonaws.com
+      SourceArn: !GetAtt NoAdminEventRule.Arn
